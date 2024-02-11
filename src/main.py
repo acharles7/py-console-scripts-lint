@@ -7,7 +7,7 @@ from src.files import parse_cfg_file
 def main() -> None:
 
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument("file", help="Your project's main setup config file", type=ConfigFileType)
+    parser.add_argument("file", help="Your project's setup config file", type=ConfigFileType)
 
     args = parser.parse_args()
     parsed_cfg_file = parse_cfg_file(args.file)
