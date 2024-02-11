@@ -29,10 +29,10 @@ packages = ["src"]
 
 [project.optional-dependencies]
 dev = [
-    "black==22.8.0",
+    "black==24.1.1",
     "flake8==5.0.4",
-    "isort==5.10.1",
-    "mypy==0.982",
+    "isort==5.13.2",
+    "mypy==1.8.0",
 ]
 
 [project.scripts]
@@ -41,17 +41,31 @@ pyconsole = "src.main:main"
 [tool.black]
 line-length = 110
 target-version = ['py311']
-multi_line_output = "VERTICAL_HANGING_INDENT"
+exclude = '''
+
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git/         # root of the project
+    | \.mypy_cache/
+    | \.egg-info
+    | build
+    | dist
+    | __pycache__
+    | stubs
+  )
+)
+'''
 
 [tool.isort]
 atomic = true
 profile = "black"
 line_length = 110
 skip_gitignore = true
+multi_line_output = "VERTICAL_HANGING_INDENT"
 
 [tool.mypy]
 python_version = "3.12"
-mypy_path = "src"
 strict = true
 warn_unreachable = true
 implicit_reexport = true

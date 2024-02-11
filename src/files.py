@@ -1,17 +1,39 @@
+from pathlib import Path
+
 from src.types import ConfigFileType
 
 
-def parse_cfg_file(file: ConfigFileType) -> dict[str, str]:
+def parse_setup_py_file(file: Path) -> dict[str, str]:
+    # Fixme: Add support
+    print(file)
+    return {}
+
+
+def parse_setup_cfg_file(file: Path) -> dict[str, str]:
+    # Fixme: Add support
+    print(file)
+    return {}
+
+
+def parse_pyproject_toml_file(file: Path) -> dict[str, str]:
+    if file.exists():
+        print(file)
+    else:
+        raise FileNotFoundError("File does not exists")
+    return {}
+
+
+def parse_cfg_file(filepath: Path, file: ConfigFileType) -> dict[str, str]:
     """Configuration file parser"""
 
     match file:
         case ConfigFileType.PYPROJECT:
-            print("It's pyproject.toml")
+            content = parse_pyproject_toml_file(filepath)
         case ConfigFileType.SETUPPY:
-            print("It's setup.py")
+            content = parse_setup_py_file(filepath)
         case ConfigFileType.SETUPCFG:
-            print("It's setup.cfg")
+            content = parse_setup_cfg_file(filepath)
         case _:
             raise ValueError(f"Invalid file name '{file.value}'")
 
-    return {}
+    return content
