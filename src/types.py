@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ConfigFileType(Enum):
+class ConfigFile(Enum):
     """The Python's project configuration file"""
 
     SETUPPY = "setup.py"

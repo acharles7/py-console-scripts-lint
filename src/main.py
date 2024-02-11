@@ -2,14 +2,13 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from src.files import parse_cfg_file
-from src.types import ConfigFileType
+from src.types import ConfigFile
 
 
 def main() -> None:
 
-    parser = ArgumentParser(description=__doc__)
-    parser.add_argument("file", help="Your project's setup config file", type=ConfigFileType)
-
+    parser = ArgumentParser()
+    parser.add_argument("file", help="Your project's setup config file", type=ConfigFile)
     args = parser.parse_args()
 
     cfg_file = args.file
