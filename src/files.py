@@ -1,29 +1,33 @@
 from pathlib import Path
+import tomllib
+from src.types import ConfigFile, ConsoleScript, ScriptStatus
 
-from src.types import ConfigFile
 
-
-def parse_setup_py_file(file: Path) -> dict[str, str]:
+def parse_setup_py_file(file: Path) -> list[ConsoleScript]:
     # Fixme: Add support
     print(file)
-    return {}
+    return []
 
 
-def parse_setup_cfg_file(file: Path) -> dict[str, str]:
+def parse_setup_cfg_file(file: Path) -> list[ConsoleScript]:
     # Fixme: Add support
     print(file)
-    return {}
+    return []
 
 
-def parse_pyproject_toml_file(file: Path) -> dict[str, str]:
-    if file.exists():
-        print(file)
-    else:
-        raise FileNotFoundError("File does not exists")
-    return {}
+def parse_pyproject_toml_file(file: Path) -> list[ConsoleScript]:
+    if not file.exists():
+        raise FileNotFoundError(f"File '{file}' does not exist")
+
+    with file.open("rb") as f:
+        cfgs = tomllib.load(f)
+
+    project = cfgs.get("project", {})
+    scripts = project.get("scripts", {})
+    return [ConsoleScript(name, script) for name, script in scripts.items()]
 
 
-def parse_cfg_file(filepath: Path, file: ConfigFile) -> dict[str, str]:
+def parse_cfg_file(filepath: Path, file: ConfigFile) -> list[ConsoleScript]:
     """Configuration file parser"""
 
     match file:
@@ -37,3 +41,11 @@ def parse_cfg_file(filepath: Path, file: ConfigFile) -> dict[str, str]:
             raise ValueError(f"Invalid file name '{file.value}'")
 
     return content
+
+
+def scan_scripts(scripts: list[ConsoleScript]) -> list[ScriptStatus]:
+
+    for script in scripts:
+        print(script)
+
+    return []
