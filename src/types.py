@@ -1,6 +1,7 @@
-from enum import Enum
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
+from typing import NamedTuple
 
 
 class ConfigFile(Enum):
@@ -25,8 +26,14 @@ class ConsoleScript:
     script: str
 
 
+class ScriptMetadata(NamedTuple):
+
+    path: Path
+    function: str
+
+
 @dataclass
 class ScriptStatus:
 
     script: ConsoleScript
-    status: Status
+    metadata: ScriptMetadata | None

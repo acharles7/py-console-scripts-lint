@@ -1,7 +1,7 @@
-from pathlib import Path
 import tomllib
-from src.types import ConfigFile, ConsoleScript, ScriptStatus
+from pathlib import Path
 
+from src.types import ConfigFile, ConsoleScript, ScriptMetadata, ScriptStatus
 
 PYTHON_FILE_EXT = ".py"
 
@@ -50,26 +50,21 @@ def find_project_root_path() -> Path:
     return Path.cwd()
 
 
-def convert_script_to_path(script: str) -> Path:
+def convert_script_to_path(script: str) -> ScriptMetadata:
     cwd = find_project_root_path()
     parts, func = script.split(":")
     path = parts.replace(".", "/")
     final_path = (cwd / path).with_suffix(PYTHON_FILE_EXT)
-    assert final_path.exists(), f"Console script path '{final_path}' does not exist"
-    return final_path
+    return ScriptMetadata(final_path, func)
 
 
-def create_abs_script_path(script: ConsoleScript) -> Path:
+def create_abs_script_path(script: ConsoleScript) -> ScriptMetadata:
     return convert_script_to_path(script.script)
 
 
 def scan_scripts(scripts: list[ConsoleScript]) -> list[ScriptStatus]:
+    scripts_metadata = []
     for script in scripts:
-        print(f"CHECKING {script.name}")
-        try:
-            script_path = create_abs_script_path(script)
-            print(f"{script_path=}")
-        except AssertionError as exc:
-            print(f"ERROR: {exc}")
-
-    return []
+        metadata = create_abs_script_path(script)
+        scripts_metadata.append(ScriptStatus(script, metadata))
+    return scripts_metadata

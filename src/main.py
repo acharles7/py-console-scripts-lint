@@ -15,7 +15,9 @@ def main() -> None:
     filepath = Path(".").resolve() / cfg_file.value
     scripts = parse_cfg_file(filepath, cfg_file)
     print("Parsed content:", scripts)
-    scan_scripts(scripts)
+    scripts_status = scan_scripts(scripts)
+    for script in scripts_status:
+        print(script)
 
 
 if __name__ == "__main__":
