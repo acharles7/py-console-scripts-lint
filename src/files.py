@@ -50,21 +50,17 @@ def find_project_root_path() -> Path:
     return Path.cwd()
 
 
-def convert_script_to_path(script: str) -> ScriptMetadata:
+def generate_script_metadata(console_script: ConsoleScript) -> ScriptMetadata:
     cwd = find_project_root_path()
-    parts, func = script.split(":")
+    parts, func = console_script.script.split(":")
     path = parts.replace(".", "/")
     final_path = (cwd / path).with_suffix(PYTHON_FILE_EXT)
     return ScriptMetadata(final_path, func)
 
 
-def create_abs_script_path(script: ConsoleScript) -> ScriptMetadata:
-    return convert_script_to_path(script.script)
-
-
 def scan_scripts(scripts: list[ConsoleScript]) -> list[ScriptStatus]:
     scripts_metadata = []
     for script in scripts:
-        metadata = create_abs_script_path(script)
+        metadata = generate_script_metadata(script)
         scripts_metadata.append(ScriptStatus(script, metadata))
     return scripts_metadata
