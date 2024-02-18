@@ -22,7 +22,7 @@ class Status(Enum):
 class ConsoleScript:
 
     name: str
-    script: Path
+    script: str
 
 
 @dataclass

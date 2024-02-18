@@ -29,6 +29,7 @@ dev = [
 
 [project.scripts]
 pyconsole = "src.main:main"
+pyconsole2 = "src.file:main"
 
 [build-system]
 requires = ["hatchling>=1.20.0", "hatch-vcs", "hatch-fancy-pypi-readme"]

@@ -3,6 +3,9 @@ import tomllib
 from src.types import ConfigFile, ConsoleScript, ScriptStatus
 
 
+PYTHON_FILE_EXT = ".py"
+
+
 def parse_setup_py_file(file: Path) -> list[ConsoleScript]:
     # Fixme: Add support
     print(file)
@@ -43,9 +46,30 @@ def parse_cfg_file(filepath: Path, file: ConfigFile) -> list[ConsoleScript]:
     return content
 
 
-def scan_scripts(scripts: list[ConsoleScript]) -> list[ScriptStatus]:
+def find_project_root_path() -> Path:
+    return Path.cwd()
 
+
+def convert_script_to_path(script: str) -> Path:
+    cwd = find_project_root_path()
+    parts, func = script.split(":")
+    path = parts.replace(".", "/")
+    final_path = (cwd / path).with_suffix(PYTHON_FILE_EXT)
+    assert final_path.exists(), f"Console script path '{final_path}' does not exist"
+    return final_path
+
+
+def create_abs_script_path(script: ConsoleScript) -> Path:
+    return convert_script_to_path(script.script)
+
+
+def scan_scripts(scripts: list[ConsoleScript]) -> list[ScriptStatus]:
     for script in scripts:
-        print(script)
+        print(f"CHECKING {script.name}")
+        try:
+            script_path = create_abs_script_path(script)
+            print(f"{script_path=}")
+        except AssertionError as exc:
+            print(f"ERROR: {exc}")
 
     return []
