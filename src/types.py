@@ -5,7 +5,7 @@ from typing import NamedTuple
 
 
 class ConfigFile(Enum):
-    """The Python's project configuration file"""
+    """The standard Python's project configuration file"""
 
     SETUPPY = "setup.py"
     SETUPCFG = "setup.cfg"
@@ -24,6 +24,7 @@ class Status(Enum):
 
 
 class ErrorReason(Enum):
+    """The error reason of the script"""
 
     UNKNOWN = "UNKNOWN"
     MODULE_NOT_FOUND = "MODULE_NOT_FOUND"
@@ -45,21 +46,15 @@ class ScriptMetadata(NamedTuple):
 
 
 @dataclass
-class ScriptStatus:
+class ScriptInfo:
 
     script: ConsoleScript
     metadata: ScriptMetadata
 
 
 @dataclass
-class EnsureScriptPathStatus:
-
-    metadata: ScriptMetadata
-    status: Status
-
-
-@dataclass
-class EnsureScriptStatus:
+class ScriptStatus:
+    """A dataclass representing the status of a console script in the project"""
 
     metadata: ScriptMetadata
     status: Status
