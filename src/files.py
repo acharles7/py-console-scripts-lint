@@ -1,7 +1,17 @@
 import tomllib
+from importlib import import_module
 from pathlib import Path
 
-from src.types import ConfigFile, ConsoleScript, ScriptMetadata, ScriptStatus
+from src.types import (
+    ConfigFile,
+    ConsoleScript,
+    EnsureScriptStatus,
+    EnsureScriptPathStatus,
+    ErrorReason,
+    ScriptMetadata,
+    ScriptStatus,
+    Status,
+)
 
 PYTHON_FILE_EXT = ".py"
 
@@ -55,7 +65,7 @@ def generate_script_metadata(console_script: ConsoleScript) -> ScriptMetadata:
     parts, func = console_script.script.split(":")
     path = parts.replace(".", "/")
     final_path = (cwd / path).with_suffix(PYTHON_FILE_EXT)
-    return ScriptMetadata(final_path, func)
+    return ScriptMetadata(final_path, func, parts)
 
 
 def scan_scripts(scripts: list[ConsoleScript]) -> list[ScriptStatus]:
@@ -64,3 +74,41 @@ def scan_scripts(scripts: list[ConsoleScript]) -> list[ScriptStatus]:
         metadata = generate_script_metadata(script)
         scripts_metadata.append(ScriptStatus(script, metadata))
     return scripts_metadata
+
+
+def ensure_scripts_exist(scripts: list[ScriptStatus]) -> list[EnsureScriptPathStatus]:
+    """Checks for existence of all scripts"""
+    script_status = []
+    for script in scripts:
+        path = script.metadata.path
+        path_status = Status.from_bool(path.exists())
+        script_status.append(EnsureScriptPathStatus(script.metadata, path_status))
+    return script_status
+
+
+def ensure_scripts_func_exists(scripts: list[ScriptStatus]) -> list[EnsureScriptStatus]:
+    """Checks whether all scripts are runnable"""
+    script_status = []
+
+    for script in scripts:
+        status = True
+        error_reason = None
+        module = script.metadata.package_path
+        function = script.metadata.function
+        try:
+            file = import_module(module)
+            getattr(file, function)
+        except ModuleNotFoundError:
+            print(f"Module '{module}' not found")
+            status = False
+            error_reason = ErrorReason.MODULE_NOT_FOUND
+        except AttributeError:
+            print(f"Function '{function}' not found")
+            status = False
+            error_reason = ErrorReason.MODULE_NOT_FOUND
+        except Exception:
+            print(f"Unexpected error")
+            raise
+        script_status.append(EnsureScriptStatus(script.metadata, Status.from_bool(status), error_reason))
+
+    return script_status
