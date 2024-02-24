@@ -1,3 +1,4 @@
+import logging
 import tomllib
 from dataclasses import dataclass
 from importlib import import_module
@@ -6,6 +7,8 @@ from pathlib import Path
 from src.types import ConfigFile, ConsoleScript, ErrorReason, ScriptInfo, ScriptMetadata, ScriptStatus, Status
 
 PYTHON_FILE_EXT = ".py"
+
+logger = logging.getLogger(__name__)
 
 
 def parse_setup_py_file(file: Path) -> list[ConsoleScript]:
@@ -82,15 +85,15 @@ class Script:
                 file = import_module(module)
                 getattr(file, function)
             except ModuleNotFoundError:
-                print(f"Module '{module}' not found")
+                logger.error(f"Module '{module}' not found")
                 status = False
                 error_reason = ErrorReason.MODULE_NOT_FOUND
             except AttributeError:
-                print(f"Function '{function}' not found")
+                logger.error(f"Module '{module}' not found")
                 status = False
                 error_reason = ErrorReason.MODULE_NOT_FOUND
             except Exception:
-                print(f"Unexpected error")
+                logger.exception("Unexpected error")
                 raise
             script_status.append(ScriptStatus(script.metadata, Status.from_bool(status), error_reason))
         self.checked_scripts = script_status
