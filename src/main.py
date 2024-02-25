@@ -4,18 +4,9 @@ from pathlib import Path
 
 from src.files import Script
 from src.types import ConfigFile
+from src.util import setup_logger
 
-
-def setup_logger() -> None:
-
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(name)s - %(message)s")
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
+logger = logging.getLogger(__name__)
 
 
 def main() -> None:
